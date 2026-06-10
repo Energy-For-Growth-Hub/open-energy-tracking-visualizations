@@ -27,7 +27,7 @@ const color = d3.scaleOrdinal()
   ]);
 
 const pie = d3.pie()
-  .value(d => d.value)
+  .value(d => d.share)
   .sort(null);
 
 const arc = d3.arc()
@@ -38,13 +38,30 @@ const labelArc = d3.arc()
   .innerRadius(radius * 0.72)
   .outerRadius(radius * 0.72);
 
-d3.csv("senegal_pie_chart.csv").then(data => {
+const params = new URLSearchParams(window.location.search);
+const selectedCountry = params.get("country") || "senegal";
+
+d3.csv("../../data/master_data_file.csv").then(data => {
 
   data.forEach(d => {
-    d.value = +d.value;
+    d.share = +d.share;
+    d.population = +d.population;
   });
 
-  const years = Array.from(new Set(data.map(d => d.year))).sort();
+  data = data.filter(d => d.slug === selectedCountry);
+
+  if (!data.length) {
+    d3.select(".chart-title").text("Country not found");
+    return;
+  }
+
+  const countryName = data[0].country_name;
+
+  d3.select(".chart-title").text(countryName);
+  document.title = `${countryName} MTF Tier Donut Chart`;
+
+  const years = Array.from(new Set(data.map(d => d.year)))
+    .sort((a, b) => +a - +b);
 
   d3.select("#year-select")
     .selectAll("option")
@@ -110,7 +127,8 @@ d3.csv("senegal_pie_chart.csv").then(data => {
             .style("opacity", 1)
             .html(`
               <strong>${d.data.tier}</strong><br>
-              ${d3.format(".1%")(d.data.value)} of population
+              ${d3.format(".1%")(d.data.share)} of population<br>
+              ${d3.format(",")(d.data.population)} people
             `);
 
         })
@@ -154,8 +172,8 @@ d3.csv("senegal_pie_chart.csv").then(data => {
         .attr("text-anchor", "middle")
         .attr("transform", d => `translate(${labelArc.centroid(d)})`)
         .text(d =>
-          d.data.value >= 0.04
-            ? d3.format(".0%")(d.data.value)
+          d.data.share >= 0.04
+            ? d3.format(".0%")(d.data.share)
             : ""
         ),
 
@@ -164,8 +182,8 @@ d3.csv("senegal_pie_chart.csv").then(data => {
         .duration(700)
         .attr("transform", d => `translate(${labelArc.centroid(d)})`)
         .text(d =>
-          d.data.value >= 0.04
-            ? d3.format(".0%")(d.data.value)
+          d.data.share >= 0.04
+            ? d3.format(".0%")(d.data.share)
             : ""
         ),
 
