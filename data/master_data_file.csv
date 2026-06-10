@@ -1,0 +1,21 @@
+country_name,country_code,slug,year,tier,share,population
+Senegal,SEN,senegal,2018,Tier 0/1,0.6321,34183630
+Senegal,SEN,senegal,2023,Tier 0/1,0.6996,38127860
+Senegal,SEN,senegal,2018,Tier 2,0.1721,9308385
+Senegal,SEN,senegal,2023,Tier 2,0.1692,9219220
+Senegal,SEN,senegal,2018,Tier 3,0.1292,6985490
+Senegal,SEN,senegal,2023,Tier 3,0.0653,3560655
+Senegal,SEN,senegal,2018,Tier 4,0.041,2217315
+Senegal,SEN,senegal,2023,Tier 4,0.0295,1609000
+Senegal,SEN,senegal,2018,Tier 5,0.0256,1383710
+Senegal,SEN,senegal,2023,Tier 5,0.0364,1985320
+Benin,BEN,benin,2018,Tier 0/1,0.4345,9728325
+Benin,BEN,benin,2023,Tier 0/1,0.5664,12740935
+Benin,BEN,benin,2018,Tier 2,0.2465,5519180
+Benin,BEN,benin,2023,Tier 2,0.2741,6165975
+Benin,BEN,benin,2018,Tier 3,0.2083,4664255
+Benin,BEN,benin,2023,Tier 3,0.0989,2224400
+Benin,BEN,benin,2018,Tier 4,0.076,1701720
+Benin,BEN,benin,2023,Tier 4,0.0317,713830
+Benin,BEN,benin,2018,Tier 5,0.0346,773775
+Benin,BEN,benin,2023,Tier 5,0.0288,647505
