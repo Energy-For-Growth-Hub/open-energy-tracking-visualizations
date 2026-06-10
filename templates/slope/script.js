@@ -1,3 +1,103 @@
+const svg = d3.select("svg");
+const width = +svg.attr("width");
+
+const margin = {
+  top: 78,
+  right: 230,
+  bottom: 40,
+  left: 240
+};
+
+const chartWidth = width - margin.left - margin.right;
+
+const g = svg.append("g")
+  .attr("transform", `translate(${margin.left},${margin.top})`);
+
+const color = d3.scaleOrdinal()
+  .domain(["Tier 0/1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"])
+  .range(["#d73027", "#f46d43", "#f2cf63", "#8fd05a", "#1f9448"]);
+
+const formatPercent = d3.format(".0%");
+
+const params = new URLSearchParams(window.location.search);
+const selectedCountry = params.get("country") || "senegal";
+
+d3.csv("../../data/master_data_file.csv").then(data => {
+  data.forEach(d => {
+    d.year = +d.year;
+    d.share = +d.share;
+  });
+
+  data = data.filter(d => d.slug === selectedCountry);
+
+  if (!data.length) {
+    d3.select(".chart-title").text("Country not found");
+    return;
+  }
+
+  const countryName = data[0].country_name;
+
+  d3.select(".chart-title").text(countryName);
+  document.title = `${countryName} Slope Chart`;
+
+  const years = Array.from(new Set(data.map(d => d.year))).sort();
+  const tiers = ["Tier 0/1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"];
+
+  d3.select("#start-year")
+    .selectAll("option")
+    .data(years)
+    .join("option")
+    .attr("value", d => d)
+    .text(d => d);
+
+  d3.select("#end-year")
+    .selectAll("option")
+    .data(years)
+    .join("option")
+    .attr("value", d => d)
+    .text(d => d);
+
+  d3.select("#start-year").property("value", years[0]);
+  d3.select("#end-year").property("value", years[years.length - 1]);
+
+  update(years[0], years[years.length - 1]);
+
+  d3.selectAll("#start-year, #end-year").on("change", function() {
+    const startYear = +d3.select("#start-year").property("value");
+    const endYear = +d3.select("#end-year").property("value");
+    update(startYear, endYear);
+  });
+
+  function update(startYear, endYear) {
+    g.selectAll("*").remove();
+
+    const filtered = data.filter(d => d.year === startYear || d.year === endYear);
+    const grouped = d3.groups(filtered, d => d.tier)
+      .filter(d => d[1].length === 2)
+      .sort((a, b) => tiers.indexOf(a[0]) - tiers.indexOf(b[0]));
+
+    const x = d3.scalePoint()
+      .domain([startYear, endYear])
+      .range([0, chartWidth]);
+
+    const baseY = {
+      "Tier 0/1": 80,
+      "Tier 2": 175,
+      "Tier 3": 265,
+      "Tier 4": 355,
+      "Tier 5": 445
+    };
+
+    // Bigger multiplier = more visible slopes.
+    const slopeMultiplier = 260;
+
+    function startValue(d) {
+      return d[1].find(v => v.year === startYear).share;
+    }
+
+    function endValue(d) {
+      return d[1].find(v => v.year === endYear).share;
+    }
 
     function changeValue(d) {
       return endValue(d) - startValue(d);
@@ -155,3 +255,4 @@
       });
   }
 });
+
