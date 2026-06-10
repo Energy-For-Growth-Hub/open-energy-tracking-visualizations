@@ -1,88 +1,3 @@
-const svg = d3.select("svg");
-const width = +svg.attr("width");
-
-const margin = {
-  top: 78,
-  right: 230,
-  bottom: 40,
-  left: 240
-};
-
-const chartWidth = width - margin.left - margin.right;
-
-const g = svg.append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
-
-const color = d3.scaleOrdinal()
-  .domain(["Tier 0/1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"])
-  .range(["#d73027", "#f46d43", "#f2cf63", "#8fd05a", "#1f9448"]);
-
-const formatPercent = d3.format(".0%");
-
-d3.csv("senegal_slope.csv").then(data => {
-  data.forEach(d => {
-    d.year = +d.year;
-    d.value = +d.value;
-  });
-
-  const years = Array.from(new Set(data.map(d => d.year))).sort();
-  const tiers = ["Tier 0/1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"];
-
-  d3.select("#start-year")
-    .selectAll("option")
-    .data(years)
-    .join("option")
-    .attr("value", d => d)
-    .text(d => d);
-
-  d3.select("#end-year")
-    .selectAll("option")
-    .data(years)
-    .join("option")
-    .attr("value", d => d)
-    .text(d => d);
-
-  d3.select("#start-year").property("value", years[0]);
-  d3.select("#end-year").property("value", years[years.length - 1]);
-
-  update(years[0], years[years.length - 1]);
-
-  d3.selectAll("#start-year, #end-year").on("change", function() {
-    const startYear = +d3.select("#start-year").property("value");
-    const endYear = +d3.select("#end-year").property("value");
-    update(startYear, endYear);
-  });
-
-  function update(startYear, endYear) {
-    g.selectAll("*").remove();
-
-    const filtered = data.filter(d => d.year === startYear || d.year === endYear);
-    const grouped = d3.groups(filtered, d => d.tier)
-      .filter(d => d[1].length === 2)
-      .sort((a, b) => tiers.indexOf(a[0]) - tiers.indexOf(b[0]));
-
-    const x = d3.scalePoint()
-      .domain([startYear, endYear])
-      .range([0, chartWidth]);
-
-    const baseY = {
-      "Tier 0/1": 80,
-      "Tier 2": 175,
-      "Tier 3": 265,
-      "Tier 4": 355,
-      "Tier 5": 445
-    };
-
-    // Bigger multiplier = more visible slopes.
-    const slopeMultiplier = 260;
-
-    function startValue(d) {
-      return d[1].find(v => v.year === startYear).value;
-    }
-
-    function endValue(d) {
-      return d[1].find(v => v.year === endYear).value;
-    }
 
     function changeValue(d) {
       return endValue(d) - startValue(d);
@@ -221,7 +136,7 @@ d3.csv("senegal_slope.csv").then(data => {
       .attr("y", cardHeight / 2 + 8)
       .attr("text-anchor", "middle")
       .text(d => {
-        const pp = Math.round((d[1][1].value - d[1][0].value) * 100);
+        const pp = Math.round((d[1][1].share - d[1][0].share) * 100);
         if (pp > 0) return "↑";
         if (pp < 0) return "↓";
         return "→";
@@ -233,7 +148,7 @@ d3.csv("senegal_slope.csv").then(data => {
       .attr("y", cardHeight / 2 + 8)
       .attr("fill", d => color(d[0]))
       .text(d => {
-        const pp = Math.round((d[1][1].value - d[1][0].value) * 100);
+        const pp = Math.round((d[1][1].share - d[1][0].share) * 100);
         if (pp > 0) return `+${pp} pp`;
         if (pp < 0) return `${pp} pp`;
         return "0 pp";
