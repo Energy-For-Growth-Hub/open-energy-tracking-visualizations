@@ -17,7 +17,7 @@
 
     .controls {
     max-width: 900px;
-    margin: 20px auto -64px;
+    margin: 16px auto 4px;
     padding-left: 90px;
     box-sizing: border-box;
     font-size: 16px;
@@ -47,6 +47,17 @@
 
     .legend text {
       font-size: 15px;
+      fill: #2E5C73;
+    }
+
+    .legend-title {
+      font-size: 17px;
+      font-weight: 700;
+      fill: #2E5C73;
+    }
+
+    .legend-subtitle {
+      font-size: 13px;
       fill: #2E5C73;
     }
 
@@ -81,13 +92,13 @@
 
     .source {
       max-width: 900px;
-      margin: -16px auto 16px;
-      padding: 0 16px;
+      margin: 0 auto 12px;
+      padding: 0 16px 0 90px;
       box-sizing: border-box;
       font-size: 13px;
       line-height: 1.4;
       color: #2E5C73;
-      text-align: center;
+      text-align: left;
     }
 
     .source a {
@@ -97,7 +108,7 @@
     @media (max-width: 560px) {
       .controls {
         margin-top: 12px;
-        margin-bottom: -34px;
+        margin-bottom: 4px;
         padding-left: 16px;
         font-size: 14px;
       }
@@ -107,7 +118,8 @@
       }
 
       .source {
-        margin-top: -8px;
+        margin-top: 0;
+        padding-left: 16px;
       }
     }
 
@@ -123,7 +135,7 @@
   <select id="year-select"></select>
 </div>
 
-<svg width="900" height="620" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid meet"></svg>
+<svg width="900" height="520" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet"></svg>
 
 <div class="source">
   Source: <a href="https://openenergymaps.org/" target="_blank" rel="noopener noreferrer">Open Energy Maps</a> / Energy for Growth Hub.
