@@ -227,30 +227,6 @@
       white-space: nowrap;
     }
 
-    .download-row {
-      width: min(100%, 1120px);
-      margin: 0 auto;
-      padding: 0 8px 12px;
-      box-sizing: border-box;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .download-button {
-      border: 1px solid #b7c6cc;
-      border-radius: 4px;
-      background: white;
-      color: #2E5C73;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-
-    .download-button:hover {
-      background: #f3f7f9;
-    }
-
     @media (max-width: 1040px) {
       .chart-module {
         grid-template-columns: 1fr;
@@ -303,14 +279,6 @@
       .change-list {
         grid-template-columns: 1fr;
       }
-
-      .download-row {
-        justify-content: stretch;
-      }
-
-      .download-button {
-        width: 100%;
-      }
     }
   </style>
 </head>
@@ -356,10 +324,6 @@
     </div>
     <div class="change-list"></div>
   </aside>
-</div>
-
-<div class="download-row">
-  <button class="download-button" id="download-chart" type="button">Download SVG</button>
 </div>
 
 <script src="script.js"></script>
