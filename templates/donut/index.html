@@ -15,50 +15,113 @@
       overflow-x: hidden;
     }
 
-    .controls {
-    max-width: 900px;
-    margin: 16px auto 4px;
-    padding-left: 90px;
-    box-sizing: border-box;
-    font-size: 16px;
-    color: #2E5C73;
-    }
-
-    select {
-      padding: 4px 8px;
-      font-size: 16px;
-      margin-left: 6px;
-      color: #2E5C73;
-      border: 1px solid #aaa;
-      border-radius: 4px;
-    }
-
     .chart-title {
       display: none;
     }
 
-    svg {
-      width: 100%;
-      max-width: 900px;
-      height: auto;
-      display: block;
+    .chart-module {
+      width: min(100%, 900px);
       margin: 0 auto;
+      padding: 12px 8px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
     }
 
-    .legend text {
-      font-size: 15px;
-      fill: #2E5C73;
+    .info-panel {
+      background: #f3f7f9;
+      border: 1px solid #e1ebef;
+      border-radius: 8px;
+      padding: 20px 18px;
+      box-sizing: border-box;
+      color: #2E5C73;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .controls {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2E5C73;
+    }
+
+    .controls label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    select {
+      width: 100%;
+      padding: 7px 10px;
+      font-size: 14px;
+      color: #2E5C73;
+      border: 1px solid #b7c6cc;
+      border-radius: 4px;
+      background: white;
+    }
+
+    .panel-divider {
+      height: 1px;
+      margin: 20px 0;
+      background: #dbe7eb;
     }
 
     .legend-title {
-      font-size: 17px;
+      margin: 0 0 4px;
+      font-size: 14px;
       font-weight: 700;
-      fill: #2E5C73;
+      color: #2E5C73;
     }
 
     .legend-subtitle {
+      margin: 0 0 14px;
+      font-size: 12px;
+      color: #2E5C73;
+      font-style: italic;
+    }
+
+    .legend-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .legend-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 13px;
-      fill: #2E5C73;
+      line-height: 1.25;
+      color: #2E5C73;
+    }
+
+    .legend-swatch {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+    }
+
+    .chart-area {
+      background: white;
+      border: 1px solid #e6eef2;
+      border-radius: 8px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    svg {
+      width: 100%;
+      max-width: 520px;
+      height: auto;
+      display: block;
     }
 
     .slice-label {
@@ -78,6 +141,18 @@
       fill: #2E5C73;
     }
 
+    .source {
+      margin-top: auto;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #2E5C73;
+      text-align: left;
+    }
+
+    .source a {
+      color: #2E5C73;
+    }
+
     .tooltip {
       position: absolute;
       background: white;
@@ -90,36 +165,22 @@
       color: #2E5C73;
     }
 
-    .source {
-      max-width: 900px;
-      margin: 0 auto 12px;
-      padding: 0 16px 0 90px;
-      box-sizing: border-box;
-      font-size: 13px;
-      line-height: 1.4;
-      color: #2E5C73;
-      text-align: left;
-    }
-
-    .source a {
-      color: #2E5C73;
-    }
-
-    @media (max-width: 560px) {
-      .controls {
-        margin-top: 12px;
-        margin-bottom: 4px;
-        padding-left: 16px;
-        font-size: 14px;
+    @media (max-width: 720px) {
+      .chart-module {
+        grid-template-columns: 1fr;
+        padding: 8px;
       }
 
-      select {
-        font-size: 14px;
+      .info-panel {
+        min-height: 0;
       }
 
       .source {
         margin-top: 0;
-        padding-left: 16px;
+      }
+
+      svg {
+        max-width: 560px;
       }
     }
 
@@ -130,15 +191,38 @@
 
 <h2 class="chart-title">Senegal</h2>
 
-<div class="controls">
-  Year:
-  <select id="year-select"></select>
-</div>
+<div class="chart-module">
+  <aside class="info-panel">
+    <div class="controls">
+      <label for="year-select">Year</label>
+      <select id="year-select"></select>
+    </div>
 
-<svg width="900" height="520" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="panel-divider"></div>
 
-<div class="source">
-  Source: <a href="https://openenergymaps.org/" target="_blank" rel="noopener noreferrer">Open Energy Maps</a> / Energy for Growth Hub.
+    <div class="legend">
+      <p class="legend-title">Tier consumption benchmarks</p>
+      <p class="legend-subtitle">kWh/person/year</p>
+
+      <ul class="legend-list">
+        <li><span class="legend-swatch" style="background: #d73027;"></span>Tier 0/1 (0.9 kWh)</li>
+        <li><span class="legend-swatch" style="background: #f46d43;"></span>Tier 2 (14.6 kWh)</li>
+        <li><span class="legend-swatch" style="background: #f2cf63;"></span>Tier 3 (73 kWh)</li>
+        <li><span class="legend-swatch" style="background: #8fd05a;"></span>Tier 4 (250 kWh)</li>
+        <li><span class="legend-swatch" style="background: #1f9448;"></span>Tier 5 (600+ kWh)</li>
+      </ul>
+    </div>
+
+    <div class="panel-divider"></div>
+
+    <div class="source">
+      Source: <a href="https://openenergymaps.org/" target="_blank" rel="noopener noreferrer">Open Energy Maps</a> / Energy for Growth Hub.
+    </div>
+  </aside>
+
+  <div class="chart-area">
+    <svg width="520" height="440" viewBox="0 0 520 440" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
 </div>
 
 <div class="tooltip"></div>
