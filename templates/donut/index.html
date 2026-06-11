@@ -12,12 +12,14 @@
       margin: 0;
       background: white;
       color: #2E5C73;
+      overflow-x: hidden;
     }
 
     .controls {
-    margin-left: 90px;
-    margin-top: 60px;
-    margin-bottom: -90px;
+    max-width: 900px;
+    margin: 20px auto -64px;
+    padding-left: 90px;
+    box-sizing: border-box;
     font-size: 16px;
     color: #2E5C73;
     }
@@ -32,22 +34,19 @@
     }
 
     .chart-title {
-      margin-left: 90px;
-      margin-bottom: -40px;
-      padding-top: 20px;
-      font-size: 42px;
-      font-weight: 700;
-      color: #2E5C73;
+      display: none;
     }
 
     svg {
-      width: 900px;
-      height: 620px;
+      width: 100%;
+      max-width: 900px;
+      height: auto;
       display: block;
+      margin: 0 auto;
     }
 
     .legend text {
-      font-size: 18px;
+      font-size: 15px;
       fill: #2E5C73;
     }
 
@@ -56,6 +55,16 @@
       font-weight: 700;
       fill: white;
       pointer-events: none;
+    }
+
+    .leader-line {
+      fill: none;
+      stroke: #9fb3bd;
+      stroke-width: 1;
+    }
+
+    .slice-label.outside {
+      fill: #2E5C73;
     }
 
     .tooltip {
@@ -70,6 +79,38 @@
       color: #2E5C73;
     }
 
+    .source {
+      max-width: 900px;
+      margin: -16px auto 16px;
+      padding: 0 16px;
+      box-sizing: border-box;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #2E5C73;
+      text-align: center;
+    }
+
+    .source a {
+      color: #2E5C73;
+    }
+
+    @media (max-width: 560px) {
+      .controls {
+        margin-top: 12px;
+        margin-bottom: -34px;
+        padding-left: 16px;
+        font-size: 14px;
+      }
+
+      select {
+        font-size: 14px;
+      }
+
+      .source {
+        margin-top: -8px;
+      }
+    }
+
   </style>
 </head>
 
@@ -82,7 +123,11 @@
   <select id="year-select"></select>
 </div>
 
-<svg width="900" height="620"></svg>
+<svg width="900" height="620" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid meet"></svg>
+
+<div class="source">
+  Source: <a href="https://openenergymaps.org/" target="_blank" rel="noopener noreferrer">Open Energy Maps</a> / Energy for Growth Hub.
+</div>
 
 <div class="tooltip"></div>
 
