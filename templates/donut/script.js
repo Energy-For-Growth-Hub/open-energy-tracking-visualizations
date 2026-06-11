@@ -5,14 +5,14 @@ const height = +svg.attr("height");
 const radius = 190;
 
 const chartG = svg.append("g")
-  .attr("transform", `translate(${width / 2 - 120}, ${height / 2 + 10})`);
+  .attr("transform", `translate(${width / 2 - 130}, ${height / 2 + 10})`);
 
 const centerG = chartG.append("g")
   .attr("class", "center-label");
 
 const legendG = svg.append("g")
   .attr("class", "legend")
-  .attr("transform", `translate(${width - 230}, 190)`);
+  .attr("transform", `translate(${width - 330}, 170)`);
 
 const tooltip = d3.select(".tooltip");
 
@@ -26,6 +26,14 @@ const color = d3.scaleOrdinal()
     "#1f9448"
   ]);
 
+const tierRanges = {
+  "Tier 0/1": "0.9 kWh",
+  "Tier 2": "14.6 kWh",
+  "Tier 3": "73 kWh",
+  "Tier 4": "250 kWh",
+  "Tier 5": "600+ kWh"
+};
+
 const pie = d3.pie()
   .value(d => d.share)
   .sort(null);
@@ -37,6 +45,14 @@ const arc = d3.arc()
 const labelArc = d3.arc()
   .innerRadius(radius * 0.72)
   .outerRadius(radius * 0.72);
+
+const outsideLabelArc = d3.arc()
+  .innerRadius(radius + 34)
+  .outerRadius(radius + 34);
+
+const leaderArc = d3.arc()
+  .innerRadius(radius + 4)
+  .outerRadius(radius + 4);
 
 const params = new URLSearchParams(window.location.search);
 const selectedCountry = params.get("country") || "senegal";
@@ -83,6 +99,7 @@ d3.csv("../../data/master_data_file.csv").then(data => {
   function update(selectedYear) {
 
     const yearData = data.filter(d => d.year === selectedYear);
+    const pieData = pie(yearData);
 
     centerG.selectAll("*").remove();
 
@@ -111,7 +128,7 @@ d3.csv("../../data/master_data_file.csv").then(data => {
       .text("by MTF tier");
 
     const slices = chartG.selectAll("path")
-      .data(pie(yearData), d => d.data.tier);
+      .data(pieData, d => d.data.tier);
 
     slices.join(
       enter => enter.append("path")
@@ -162,33 +179,58 @@ d3.csv("../../data/master_data_file.csv").then(data => {
       exit => exit.remove()
     );
 
+    chartG.selectAll(".leader-line")
+      .data(pieData.filter(d => d.data.share < 0.05), d => d.data.tier)
+      .join("polyline")
+      .attr("class", "leader-line")
+      .attr("points", d => {
+        const labelPoint = outsideLabelArc.centroid(d);
+        labelPoint[0] += labelPoint[0] < 0 ? -8 : 8;
+
+        return [
+          arc.centroid(d),
+          leaderArc.centroid(d),
+          labelPoint
+        ];
+      });
+
     const labels = chartG.selectAll("text.slice-label")
-      .data(pie(yearData), d => d.data.tier);
+      .data(pieData, d => d.data.tier);
 
     labels.join(
-
       enter => enter.append("text")
-        .attr("class", "slice-label")
-        .attr("text-anchor", "middle")
-        .attr("transform", d => `translate(${labelArc.centroid(d)})`)
-        .text(d =>
-          d.data.share >= 0.04
-            ? d3.format(".0%")(d.data.share)
-            : ""
-        ),
+        .attr("class", d => d.data.share < 0.05 ? "slice-label outside" : "slice-label")
+        .attr("text-anchor", d => {
+          if (d.data.share >= 0.05) return "middle";
+          return outsideLabelArc.centroid(d)[0] < 0 ? "end" : "start";
+        })
+        .attr("transform", d => {
+          if (d.data.share >= 0.05) return `translate(${labelArc.centroid(d)})`;
+
+          const point = outsideLabelArc.centroid(d);
+          point[0] += point[0] < 0 ? -12 : 12;
+          return `translate(${point})`;
+        })
+        .text(d => d3.format(".0%")(d.data.share)),
 
       update => update
+        .attr("class", d => d.data.share < 0.05 ? "slice-label outside" : "slice-label")
+        .attr("text-anchor", d => {
+          if (d.data.share >= 0.05) return "middle";
+          return outsideLabelArc.centroid(d)[0] < 0 ? "end" : "start";
+        })
         .transition()
         .duration(700)
-        .attr("transform", d => `translate(${labelArc.centroid(d)})`)
-        .text(d =>
-          d.data.share >= 0.04
-            ? d3.format(".0%")(d.data.share)
-            : ""
-        ),
+        .attr("transform", d => {
+          if (d.data.share >= 0.05) return `translate(${labelArc.centroid(d)})`;
+
+          const point = outsideLabelArc.centroid(d);
+          point[0] += point[0] < 0 ? -12 : 12;
+          return `translate(${point})`;
+        })
+        .text(d => d3.format(".0%")(d.data.share)),
 
       exit => exit.remove()
-
     );
   }
 
@@ -196,10 +238,22 @@ d3.csv("../../data/master_data_file.csv").then(data => {
 
     const items = color.domain();
 
+    legendG.append("text")
+      .attr("class", "legend-title")
+      .attr("x", 0)
+      .attr("y", 0)
+      .text("Tier consumption benchmarks");
+
+    legendG.append("text")
+      .attr("class", "legend-subtitle")
+      .attr("x", 0)
+      .attr("y", 22)
+      .text("kWh/person/year");
+
     const legendItems = legendG.selectAll("g")
       .data(items)
       .join("g")
-      .attr("transform", (d, i) => `translate(0, ${i * 40})`);
+      .attr("transform", (d, i) => `translate(0, ${48 + i * 36})`);
 
     legendItems.append("rect")
       .attr("width", 20)
@@ -209,7 +263,7 @@ d3.csv("../../data/master_data_file.csv").then(data => {
     legendItems.append("text")
       .attr("x", 32)
       .attr("y", 16)
-      .text(d => d);
+      .text(d => `${d} (${tierRanges[d]})`);
 
   }
 
