@@ -2,17 +2,13 @@ const svg = d3.select("svg");
 const width = +svg.attr("width");
 const height = +svg.attr("height");
 
-const radius = 190;
+const radius = 170;
 
 const chartG = svg.append("g")
-  .attr("transform", `translate(${width / 2 - 130}, ${height / 2 + 10})`);
+  .attr("transform", `translate(${width / 2}, ${height / 2 + 8})`);
 
 const centerG = chartG.append("g")
   .attr("class", "center-label");
-
-const legendG = svg.append("g")
-  .attr("class", "legend")
-  .attr("transform", `translate(${width - 330}, 170)`);
 
 const tooltip = d3.select(".tooltip");
 
@@ -26,20 +22,12 @@ const color = d3.scaleOrdinal()
     "#1f9448"
   ]);
 
-const tierRanges = {
-  "Tier 0/1": "0.9 kWh",
-  "Tier 2": "14.6 kWh",
-  "Tier 3": "73 kWh",
-  "Tier 4": "250 kWh",
-  "Tier 5": "600+ kWh"
-};
-
 const pie = d3.pie()
   .value(d => d.share)
   .sort(null);
 
 const arc = d3.arc()
-  .innerRadius(85)
+  .innerRadius(76)
   .outerRadius(radius);
 
 const labelArc = d3.arc()
@@ -47,8 +35,8 @@ const labelArc = d3.arc()
   .outerRadius(radius * 0.72);
 
 const outsideLabelArc = d3.arc()
-  .innerRadius(radius + 34)
-  .outerRadius(radius + 34);
+  .innerRadius(radius + 26)
+  .outerRadius(radius + 26);
 
 const leaderArc = d3.arc()
   .innerRadius(radius + 4)
@@ -85,8 +73,6 @@ d3.csv("../../data/master_data_file.csv").then(data => {
     .join("option")
     .attr("value", d => d)
     .text(d => d);
-
-  drawLegend();
 
   update(years[years.length - 1]);
 
@@ -232,39 +218,6 @@ d3.csv("../../data/master_data_file.csv").then(data => {
 
       exit => exit.remove()
     );
-  }
-
-  function drawLegend() {
-
-    const items = color.domain();
-
-    legendG.append("text")
-      .attr("class", "legend-title")
-      .attr("x", 0)
-      .attr("y", 0)
-      .text("Tier consumption benchmarks");
-
-    legendG.append("text")
-      .attr("class", "legend-subtitle")
-      .attr("x", 0)
-      .attr("y", 22)
-      .text("kWh/person/year");
-
-    const legendItems = legendG.selectAll("g")
-      .data(items)
-      .join("g")
-      .attr("transform", (d, i) => `translate(0, ${48 + i * 36})`);
-
-    legendItems.append("rect")
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr("fill", d => color(d));
-
-    legendItems.append("text")
-      .attr("x", 32)
-      .attr("y", 16)
-      .text(d => `${d} (${tierRanges[d]})`);
-
   }
 
 });
