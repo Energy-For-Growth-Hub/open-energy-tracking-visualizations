@@ -99,7 +99,6 @@ d3.csv("../../data/master_data_file.csv").then(data => {
     update(startYear, endYear);
   });
 
-  d3.select("#download-chart").on("click", downloadSvg);
 
   function getTierPair(tier, startYear, endYear) {
     const start = data.find(d => d.tier === tier && d.year === startYear);
@@ -221,22 +220,3 @@ d3.csv("../../data/master_data_file.csv").then(data => {
       .text(d => formatChange(d.change));
   }
 
-  function downloadSvg() {
-    const serializer = new XMLSerializer();
-    const svgNode = svg.node().cloneNode(true);
-    svgNode.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-
-    const blob = new Blob([serializer.serializeToString(svgNode)], {
-      type: "image/svg+xml;charset=utf-8"
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${selectedCountry}-mtf-tier-slope-chart.svg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
-});
